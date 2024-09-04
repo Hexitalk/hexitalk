@@ -1,1 +1,4 @@
 
+[submodule "client-gateway-ms"]
+	path = client-gateway-ms
+	url = https://github.com/Hexitalk/client-gateway-ms.git
