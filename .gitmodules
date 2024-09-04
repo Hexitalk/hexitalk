@@ -11,3 +11,6 @@
 [submodule "auth-ms"]
 	path = auth-ms
 	url = https://github.com/Hexitalk/auth-ms.git
+[submodule "web-client"]
+	path = web-client
+	url = https://github.com/Hexitalk/web-client.git
