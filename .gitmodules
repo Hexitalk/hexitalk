@@ -2,3 +2,12 @@
 [submodule "client-gateway-ms"]
 	path = client-gateway-ms
 	url = https://github.com/Hexitalk/client-gateway-ms.git
+[submodule "profiles-ms"]
+	path = profiles-ms
+	url = https://github.com/Hexitalk/profiles-ms.git
+[submodule "users-ms"]
+	path = users-ms
+	url = https://github.com/Hexitalk/users-ms.git
+[submodule "auth-ms"]
+	path = auth-ms
+	url = https://github.com/Hexitalk/auth-ms.git
