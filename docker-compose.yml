@@ -1,0 +1,99 @@
+version: "3"
+
+services:
+  # NATS
+  nats-server:
+    image: nats:latest
+    ports:
+      - "8222:8222"
+
+  # CLIENT GATEWAY MICROSERVICE
+  client-gateway-ms:
+    build: ./client-gateway-ms
+    ports:
+      - ${CLIENT_GATEWAY_MS_OUTSIDE_PORT}:${CLIENT_GATEWAY_MS_INSIDE_PORT}
+    volumes:
+      - ./client-gateway-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${CLIENT_GATEWAY_MS_INSIDE_PORT}
+      - NATS_SERVERS=nats://nats-server:${NATS_PORT}
+
+  # AUTH MICROSERVICE
+  auth-ms:
+    build: ./auth-ms
+    volumes:
+      - ./auth-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${AUTH_MS_INSIDE_PORT}
+      - NATS_SERVERS=nats://nats-server:${NATS_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+
+  # USERS MICROSERVICE
+  users-ms:
+    build: ./users-ms
+    volumes:
+      - ./users-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${USERS_MS_INSIDE_PORT}
+      - NATS_SERVERS=nats://nats-server:${NATS_PORT}
+      - DATABASE_URL=mongodb://users-db:${USERS_DB_OUTSIDE_PORT}
+      - DATABASE_USER=${USERS_DB_USERNAME}
+      - DATABASE_PASS=${USERS_DB_PASSWORD}
+      - DATABASE_NAME=${USERS_DB_DATABASE}
+
+  # USERS DATABASE
+  users-db:
+    container_name: users_database
+    image: mongo:6.0
+    restart: always
+    volumes:
+      - ./users-ms/mongodb:/data/db
+    ports:
+      - ${USERS_DB_OUTSIDE_PORT}:${USERS_DB_INSIDE_PORT}
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${USERS_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${USERS_DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${USERS_DB_DATABASE}
+
+  # PROFILES MICROSERVICES
+  profiles-ms:
+    build: ./profiles-ms
+    volumes:
+      - ./profiles-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${PROFILES_MS_INSIDE_PORT}
+      - NATS_SERVERS=nats://nats-server:${NATS_PORT}
+      - DATABASE_URL=mongodb://profiles-db:${PROFILES_DB_OUTSIDE_PORT}
+      - DATABASE_USER=${PROFILES_DB_USERNAME}
+      - DATABASE_PASS=${PROFILES_DB_PASSWORD}
+      - DATABASE_NAME=${PROFILES_DB_DATABASE}
+
+  # PROFILES DATABASE
+  profiles-db:
+    container_name: profiles_database
+    image: mongo:6.0
+    restart: always
+    volumes:
+      - ./profiles-ms/mongodb:/data/db
+    ports:
+      - 27018:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+      - MONGO_INITDB_DATABASE=profilesdb
+
+  # WEB CLIENT
+  web-client:
+    build: ./web-client
+    ports:
+      - ${WEB_CLIENT_OUTSIDE_PORT}:4200
+    volumes:
+      - ./web-client/src:/app/src
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start
