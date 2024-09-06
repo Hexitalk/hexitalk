@@ -39,7 +39,7 @@ services:
     environment:
       - PORT=${USERS_MS_INSIDE_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
-      - DATABASE_URL=mongodb://users-db:${USERS_DB_OUTSIDE_PORT}
+      - DATABASE_URL=mongodb://users-db:${USERS_DB_INSIDE_PORT}
       - DATABASE_USER=${USERS_DB_USERNAME}
       - DATABASE_PASS=${USERS_DB_PASSWORD}
       - DATABASE_NAME=${USERS_DB_DATABASE}
@@ -67,7 +67,7 @@ services:
     environment:
       - PORT=${PROFILES_MS_INSIDE_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
-      - DATABASE_URL=mongodb://profiles-db:${PROFILES_DB_OUTSIDE_PORT}
+      - DATABASE_URL=mongodb://profiles-db:${PROFILES_DB_INSIDE_PORT}
       - DATABASE_USER=${PROFILES_DB_USERNAME}
       - DATABASE_PASS=${PROFILES_DB_PASSWORD}
       - DATABASE_NAME=${PROFILES_DB_DATABASE}
