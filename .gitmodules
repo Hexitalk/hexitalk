@@ -14,3 +14,6 @@
 [submodule "web-client"]
 	path = web-client
 	url = https://github.com/Hexitalk/web-client.git
+[submodule "socket-ms"]
+	path = socket-ms
+	url = https://github.com/Hexitalk/socket-ms.git
