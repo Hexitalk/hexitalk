@@ -17,3 +17,6 @@
 [submodule "socket-ms"]
 	path = socket-ms
 	url = https://github.com/Hexitalk/socket-ms.git
+[submodule "hub-ms"]
+	path = hub-ms
+	url = https://github.com/Hexitalk/hub-ms.git
