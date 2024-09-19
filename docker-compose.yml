@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   # NATS
   nats-server:
@@ -30,6 +28,20 @@ services:
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
       - JWT_SECRET=${JWT_SECRET}
 
+  # USERS DATABASE
+  users-db:
+    container_name: users_database
+    image: mongo:6.0
+    restart: always
+    volumes:
+      - ./users-ms/mongodb:/data/db
+    ports:
+      - ${USERS_DB_OUTSIDE_PORT}:${USERS_DB_INSIDE_PORT}
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${USERS_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${USERS_DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${USERS_DB_DATABASE}
+
   # USERS MICROSERVICE
   users-ms:
     build: ./users-ms
@@ -44,19 +56,19 @@ services:
       - DATABASE_PASS=${USERS_DB_PASSWORD}
       - DATABASE_NAME=${USERS_DB_DATABASE}
 
-  # USERS DATABASE
-  users-db:
-    container_name: users_database
+  # PROFILES DATABASE
+  profiles-db:
+    container_name: profiles_database
     image: mongo:6.0
     restart: always
     volumes:
-      - ./users-ms/mongodb:/data/db
+      - ./profiles-ms/mongodb:/data/db
     ports:
-      - ${USERS_DB_OUTSIDE_PORT}:${USERS_DB_INSIDE_PORT}
+      - ${PROFILES_DB_OUTSIDE_PORT}:${PROFILES_DB_INSIDE_PORT}
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${USERS_DB_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${USERS_DB_PASSWORD}
-      - MONGO_INITDB_DATABASE=${USERS_DB_DATABASE}
+      - MONGO_INITDB_ROOT_USERNAME=${PROFILES_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${PROFILES_DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${PROFILES_DB_DATABASE}
 
   # PROFILES MICROSERVICES
   profiles-ms:
@@ -72,19 +84,33 @@ services:
       - DATABASE_PASS=${PROFILES_DB_PASSWORD}
       - DATABASE_NAME=${PROFILES_DB_DATABASE}
 
-  # PROFILES DATABASE
-  profiles-db:
-    container_name: profiles_database
+  # HUB DATABASE
+  hub-db:
+    container_name: hub_database
     image: mongo:6.0
     restart: always
     volumes:
-      - ./profiles-ms/mongodb:/data/db
+      - ./hub-ms/mongodb:/data/db
     ports:
-      - 27018:27017
+      - ${HUB_DB_OUTSIDE_PORT}:${HUB_DB_INSIDE_PORT}
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=mongo
-      - MONGO_INITDB_ROOT_PASSWORD=123456
-      - MONGO_INITDB_DATABASE=profilesdb
+      - MONGO_INITDB_ROOT_USERNAME=${HUB_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${HUB_DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${HUB_DB_DATABASE}
+
+  # HUB MICROSERVICES
+  hub-ms:
+    build: ./hub-ms
+    volumes:
+      - ./hub-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${HUB_MS_INSIDE_PORT}
+      - NATS_SERVERS=nats://nats-server:${NATS_PORT}
+      - DATABASE_URL=mongodb://hub-db:${HUB_DB_INSIDE_PORT}
+      - DATABASE_USER=${HUB_DB_USERNAME}
+      - DATABASE_PASS=${HUB_DB_PASSWORD}
+      - DATABASE_NAME=${HUB_DB_DATABASE}
 
   # SOCKET MICROSERVICE
   socket-ms:
@@ -97,6 +123,8 @@ services:
     environment:
       - PORT=${SOCKET_MS_INSIDE_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
+      - SOCKET_CORS_ORIGINS=${SOCKET_MS_CORS_ORIGINS}
+      - SOCKET_CORS_TRANSPORTS=${SOCKET_MS_CORS_TRANSPORTS}
 
   # WEB CLIENT
   web-client:
