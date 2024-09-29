@@ -20,3 +20,6 @@
 [submodule "hub-ms"]
 	path = hub-ms
 	url = https://github.com/Hexitalk/hub-ms.git
+[submodule "chat-ms"]
+	path = chat-ms
+	url = https://github.com/Hexitalk/chat-ms.git
