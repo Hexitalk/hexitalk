@@ -112,6 +112,34 @@ services:
       - DATABASE_PASS=${HUB_DB_PASSWORD}
       - DATABASE_NAME=${HUB_DB_DATABASE}
 
+  # CHAT DATABASE
+  chat-db:
+    container_name: chat_database
+    image: mongo:6.0
+    restart: always
+    volumes:
+      - ./chat-ms/mongodb:/data/db
+    ports:
+      - ${CHAT_DB_OUTSIDE_PORT}:${CHAT_DB_INSIDE_PORT}
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${CHAT_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${CHAT_DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${CHAT_DB_DATABASE}
+
+  # CHAT MICROSERVICES
+  chat-ms:
+    build: ./chat-ms
+    volumes:
+      - ./chat-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${CHAT_MS_INSIDE_PORT}
+      - NATS_SERVERS=nats://nats-server:${NATS_PORT}
+      - DATABASE_URL=mongodb://chat-db:${CHAT_DB_INSIDE_PORT}
+      - DATABASE_USER=${CHAT_DB_USERNAME}
+      - DATABASE_PASS=${CHAT_DB_PASSWORD}
+      - DATABASE_NAME=${CHAT_DB_DATABASE}
+
   # SOCKET MICROSERVICE
   socket-ms:
     build: ./socket-ms
