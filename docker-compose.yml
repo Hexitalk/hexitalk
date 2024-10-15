@@ -9,12 +9,12 @@ services:
   client-gateway-ms:
     build: ./client-gateway-ms
     ports:
-      - ${CLIENT_GATEWAY_MS_OUTSIDE_PORT}:${CLIENT_GATEWAY_MS_INSIDE_PORT}
+      - ${CLIENT_GATEWAY_MS_OUTSIDE_PORT}:${CLIENT_GATEWAY_MS_PORT}
     volumes:
       - ./client-gateway-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${CLIENT_GATEWAY_MS_INSIDE_PORT}
+      - PORT=${CLIENT_GATEWAY_MS_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
 
   # AUTH MICROSERVICE
@@ -24,7 +24,7 @@ services:
       - ./auth-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${AUTH_MS_INSIDE_PORT}
+      - PORT=${AUTH_MS_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
       - JWT_SECRET=${JWT_SECRET}
 
@@ -49,12 +49,9 @@ services:
       - ./users-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${USERS_MS_INSIDE_PORT}
+      - PORT=${USERS_MS_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
-      - DATABASE_URL=mongodb://users-db:${USERS_DB_INSIDE_PORT}
-      - DATABASE_USER=${USERS_DB_USERNAME}
-      - DATABASE_PASS=${USERS_DB_PASSWORD}
-      - DATABASE_NAME=${USERS_DB_DATABASE}
+      - DATABASE_URL=${USERS_DB_URL}
 
   # PROFILES DATABASE
   profiles-db:
@@ -77,12 +74,9 @@ services:
       - ./profiles-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${PROFILES_MS_INSIDE_PORT}
+      - PORT=${PROFILES_MS_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
-      - DATABASE_URL=mongodb://profiles-db:${PROFILES_DB_INSIDE_PORT}
-      - DATABASE_USER=${PROFILES_DB_USERNAME}
-      - DATABASE_PASS=${PROFILES_DB_PASSWORD}
-      - DATABASE_NAME=${PROFILES_DB_DATABASE}
+      - DATABASE_URL=${PROFILES_DB_URL}
 
   # HUB DATABASE
   hub-db:
@@ -105,12 +99,9 @@ services:
       - ./hub-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${HUB_MS_INSIDE_PORT}
+      - PORT=${HUB_MS_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
-      - DATABASE_URL=mongodb://hub-db:${HUB_DB_INSIDE_PORT}
-      - DATABASE_USER=${HUB_DB_USERNAME}
-      - DATABASE_PASS=${HUB_DB_PASSWORD}
-      - DATABASE_NAME=${HUB_DB_DATABASE}
+      - DATABASE_URL=${HUB_DB_URL}
 
   # CHAT DATABASE
   chat-db:
@@ -133,23 +124,20 @@ services:
       - ./chat-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${CHAT_MS_INSIDE_PORT}
+      - PORT=${CHAT_MS_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
-      - DATABASE_URL=mongodb://chat-db:${CHAT_DB_INSIDE_PORT}
-      - DATABASE_USER=${CHAT_DB_USERNAME}
-      - DATABASE_PASS=${CHAT_DB_PASSWORD}
-      - DATABASE_NAME=${CHAT_DB_DATABASE}
+      - DATABASE_URL=${CHAT_DB_URL}
 
   # SOCKET MICROSERVICE
   socket-ms:
     build: ./socket-ms
     ports:
-      - ${SOCKET_MS_OUTSIDE_PORT}:${SOCKET_MS_INSIDE_PORT}
+      - ${SOCKET_MS_OUTSIDE_PORT}:${SOCKET_MS_PORT}
     volumes:
       - ./socket-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${SOCKET_MS_INSIDE_PORT}
+      - PORT=${SOCKET_MS_PORT}
       - NATS_SERVERS=nats://nats-server:${NATS_PORT}
       - SOCKET_CORS_ORIGINS=${SOCKET_MS_CORS_ORIGINS}
       - SOCKET_CORS_TRANSPORTS=${SOCKET_MS_CORS_TRANSPORTS}

@@ -1,1 +1,91 @@
-# under construction
+services:
+  # NATS
+  nats-server:
+    image: nats:latest
+
+  # CLIENT GATEWAY MICROSERVICE
+  client-gateway-ms:
+    build:
+      context: ./client-gateway-ms
+      dockerfile: dockerfile.prod
+      args:
+        - CLIENT_GATEWAY_MS_PORT=${CLIENT_GATEWAY_MS_PORT}
+        - CLIENT_GATEWAY_MS_OUTSIDE_PORT=${CLIENT_GATEWAY_MS_OUTSIDE_PORT}
+        - NATS_PORT=${NATS_PORT}
+    image: client-gateway-ms-prod
+
+  # AUTH MICROSERVICE
+  auth-ms:
+    build:
+      context: ./auth-ms
+      dockerfile: dockerfile.prod
+      args:
+        - AUTH_MS_PORT=${AUTH_MS_PORT}
+        - NATS_PORT=${NATS_PORT}
+        - JWT_SECRET=${JWT_SECRET}
+    image: auth-ms-prod
+
+  # USERS MICROSERVICE
+  users-ms:
+    build:
+      context: ./users-ms
+      dockerfile: dockerfile.prod
+      args:
+        - USERS_MS_PORT=${USERS_MS_PORT}
+        - NATS_PORT=${NATS_PORT}
+        - USERS_DB_URL=${USERS_DB_URL}
+    image: users-ms-prod
+
+  # PROFILES MICROSERVICES
+  profiles-ms:
+    build:
+      context: ./profiles-ms
+      dockerfile: dockerfile.prod
+      args:
+        - PROFILES_MS_PORT=${PROFILES_MS_PORT}
+        - NATS_PORT=${NATS_PORT}
+        - PROFILES_DB_URL=${PROFILES_DB_URL}
+    image: profiles-ms-prod
+
+  # HUB MICROSERVICES
+  hub-ms:
+    build:
+      context: ./hub-ms
+      dockerfile: dockerfile.prod
+      args:
+        - HUB_MS_PORT=${HUB_MS_PORT}
+        - NATS_PORT=${NATS_PORT}
+        - HUB_DB_URL=${HUB_DB_URL}
+    image: hub-ms-prod
+
+  # CHAT MICROSERVICES
+  chat-ms:
+    build:
+      context: ./chat-ms
+      dockerfile: dockerfile.prod
+      args:
+        - CHAT_MS_PORT=${CHAT_MS_PORT}
+        - NATS_PORT=${NATS_PORT}
+        - CHAT_DB_URL=${CHAT_DB_URL}
+    image: chat-ms-prod
+
+  # SOCKET MICROSERVICE
+  socket-ms:
+    build:
+      context: ./socket-ms
+      dockerfile: dockerfile.prod
+      args:
+        - SOCKET_MS_PORT=${SOCKET_MS_PORT}
+        - NATS_PORT=${NATS_PORT}
+        - SOCKET_MS_CORS_ORIGINS=${SOCKET_MS_CORS_ORIGINS}
+        - SOCKET_MS_CORS_TRANSPORTS=${SOCKET_MS_CORS_TRANSPORTS}
+    image: socket-ms-prod
+
+  # WEB CLIENT
+  # web-client:
+  #   build:
+  #     context: ./web-client
+  #     dockerfile: dockerfile.prod
+  #     args:
+  #       - WEB_CLIENT_OUTSIDE_PORT=${WEB_CLIENT_OUTSIDE_PORT}
+  #   image: web-client-prod
