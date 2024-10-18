@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: profiles-ms
+  name: profiles-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profiles-ms
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: profiles-ms
+    spec:
+      containers:
+        - image: europe-southwest1-docker.pkg.dev/hexitalk/hexitalk-img-registry/profiles-ms
+          name: profiles-ms
+          env:
+            - name: PORT
+              value: "3003"
+            - name: NATS_SERVERS
+              value: "nats://nats"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: profiles-ms-secrets
+                  key: DATABASE_URL
+          resources: {}
+status: {}

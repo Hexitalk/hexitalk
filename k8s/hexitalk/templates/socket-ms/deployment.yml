@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: socket-ms
+  name: socket-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: socket-ms
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: socket-ms
+    spec:
+      containers:
+        - image: europe-southwest1-docker.pkg.dev/hexitalk/hexitalk-img-registry/socket-ms
+          name: socket-ms
+          env:
+            - name: PORT
+              value: "3100"
+            - name: NATS_SERVERS
+              value: "nats://nats"
+            - name: SOCKET_CORS_ORIGINS
+              value: "http://localhost:4200"
+            - name: SOCKET_CORS_TRANSPORTS
+              value: "websocket"
+          resources: {}
+status: {}

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: client-gateway-ms
+  name: client-gateway-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-gateway-ms
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: client-gateway-ms
+    spec:
+      containers:
+        - image: europe-southwest1-docker.pkg.dev/hexitalk/hexitalk-img-registry/client-gateway-ms
+          name: client-gateway-ms
+          env:
+            - name: PORT
+              value: "3000"
+            - name: NATS_SERVERS
+              value: "nats://nats"
+          resources: {}
+status: {}

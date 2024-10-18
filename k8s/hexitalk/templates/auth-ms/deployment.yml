@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: auth-ms
+  name: auth-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-ms
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: auth-ms
+    spec:
+      containers:
+        - image: europe-southwest1-docker.pkg.dev/hexitalk/hexitalk-img-registry/auth-ms
+          name: auth-ms
+          env:
+            - name: PORT
+              value: "3001"
+            - name: NATS_SERVERS
+              value: "nats://nats"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-ms-secrets
+                  key: JWT_SECRET
+          resources: {}
+status: {}
