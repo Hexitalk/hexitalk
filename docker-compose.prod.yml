@@ -82,10 +82,10 @@ services:
     image: socket-ms-prod
 
   # WEB CLIENT
-  # web-client:
-  #   build:
-  #     context: ./web-client
-  #     dockerfile: dockerfile.prod
-  #     args:
-  #       - WEB_CLIENT_OUTSIDE_PORT=${WEB_CLIENT_OUTSIDE_PORT}
-  #   image: web-client-prod
+  web-client:
+    build:
+      context: ./web-client
+      dockerfile: dockerfile.prod
+      args:
+        - WEB_CLIENT_OUTSIDE_PORT=${WEB_CLIENT_OUTSIDE_PORT}
+    image: web-client-prod
